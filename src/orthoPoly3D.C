@@ -4,14 +4,14 @@
 // remove given column from matrix in place (VERY SLOW)
 void removeColumn(MatrixXd& matrix, unsigned int colToRemove)
 {
-    unsigned int numRows = matrix.rows();
-    unsigned int numCols = matrix.cols()-1;
-
-    if( colToRemove < numCols )
-        matrix.block(0,colToRemove,numRows,numCols-colToRemove) = 
-          matrix.rightCols(numCols-colToRemove);
-
-    matrix.conservativeResize(numRows,numCols);
+  unsigned int numRows = matrix.rows();
+  unsigned int numCols = matrix.cols()-1;
+  
+  if( colToRemove < numCols )
+      matrix.block(0,colToRemove,numRows,numCols-colToRemove) = 
+        matrix.rightCols(numCols-colToRemove);
+  
+  matrix.conservativeResize(numRows,numCols);
 }    
 
 
@@ -72,7 +72,7 @@ void removeRowT(const MatrixXd& matrix,
 // default ctor
 orthoPoly3D::orthoPoly3D():finished(0), 
                            opx(new orthoPoly1D()),
-									         opy(new orthoPoly1D()), 
+                           opy(new orthoPoly1D()), 
                            opz(new orthoPoly1D())
 { 
   a.resize(0); 
@@ -98,38 +98,38 @@ void orthoPoly3D::initCheck()
 
 // complete ctor
 orthoPoly3D::orthoPoly3D(int _order, const VectorXd& sigma, 
-												 const std::vector<double>& x, 
+                         const std::vector<double>& x, 
                          const std::vector<double>& y, 
-												 const std::vector<double>& z) :
-                          order(_order)
+                         const std::vector<double>& z) :
+                         order(_order)
 { 
-	initCheck();
-
-	opx = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,x));
-	opy = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,y));
-	opz = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,z));
-	computeA(sigma); 
+  initCheck();
+  
+  opx = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,x));
+  opy = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,y));
+  opz = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,z));
+  computeA(sigma); 
 }
 
 orthoPoly3D::orthoPoly3D(int _order, const std::vector<std::vector<double>>& coords)
 {
 
-	initCheck();	
-	
-	std::vector<double> x(coords.size());
-	std::vector<double> y(coords.size());
-	std::vector<double> z(coords.size());
-
-	for (int i = 0; i < coords.size(); ++i)
-	{
-		x[i] = coords[i][0];
-		y[i] = coords[i][1];
-		z[i] = coords[i][2];
-	}	
-
-	opx = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,x));
-	opy = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,y));
-	opz = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,z));
+  initCheck();	
+  
+  std::vector<double> x(coords.size());
+  std::vector<double> y(coords.size());
+  std::vector<double> z(coords.size());
+  
+  for (int i = 0; i < coords.size(); ++i)
+  {
+  	x[i] = coords[i][0];
+  	y[i] = coords[i][1];
+  	z[i] = coords[i][2];
+  }	
+  
+  opx = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,x));
+  opy = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,y));
+  opz = std::unique_ptr<orthoPoly1D>(new orthoPoly1D(order,z));
 }
 
 
@@ -150,32 +150,32 @@ orthoPoly3D::orthoPoly3D(orthoPoly3D&& op)
 // move assignment	
 orthoPoly3D& orthoPoly3D::operator=(orthoPoly3D&& op)
 {
-	// check against self assignment
-	if (this != &op)
-	{
-		// release held resources
-		this->Reset();
-		// move resoures from op to this (i.e. pilfer)
-  	opx = std::move(op.opx);
-  	opy = std::move(op.opy);
-  	opz = std::move(op.opz);
-		a = op.a;
-		toRemove = op.toRemove;
-		finished = op.finished;
-		order = op.order;
-		// set op to default state	
-		op.Reset();
-	}
-  	return *this;
+  // check against self assignment
+  if (this != &op)
+  {
+    // release held resources
+    this->Reset();
+    // move resoures from op to this (i.e. pilfer)
+    opx = std::move(op.opx);
+    opy = std::move(op.opy);
+    opz = std::move(op.opz);
+    a = op.a;
+    toRemove = op.toRemove;
+    finished = op.finished;
+    order = op.order;
+    // set op to default state	
+    op.Reset();
+  }
+  return *this;
 }
 
 // compute coefficients for polynomial expansion of sampled function
 void orthoPoly3D::computeA(const VectorXd& sigma)
 {
-	#ifdef DEBUG
+  #ifdef DEBUG
     Timer T;
   #endif
-
+  
   MatrixXd tmp1 = opx->phi*opx->phiTphiInv; 
   MatrixXd tmp2 = opy->phi*opy->phiTphiInv;
   MatrixXd tmp3 = opz->phi*opz->phiTphiInv;
@@ -189,31 +189,31 @@ void orthoPoly3D::computeA(const VectorXd& sigma)
     T1.stop();
     std::cout << "Time for building kronprod in constructor: " << T1.elapsed() << std::endl;
     std::cout << kronProd_full.rows() << " " << kronProd_full.cols() << std::endl;
-	  std::cout << "Removing stuff" << std::endl;
+    std::cout << "Removing stuff" << std::endl;
   #endif
-	MatrixXdRM kronProd_red(kronProd_full.cols()-toRemove.size(),kronProd_full.rows());
-	#ifdef DEBUG
+  MatrixXdRM kronProd_red(kronProd_full.cols()-toRemove.size(),kronProd_full.rows());
+  #ifdef DEBUG
     T.start();
   #endif  
-	removeRowT(kronProd_full, kronProd_red,toRemove);
+  removeRowT(kronProd_full, kronProd_red,toRemove);
   
-	a = kronProd_red*sigma;
+  a = kronProd_red*sigma;
   #ifdef DEBUG
-	  T.stop();
-	  std::cout << "Time: " << T.elapsed() << std::endl;
+    T.stop();
+    std::cout << "Time: " << T.elapsed() << std::endl;
     std::cout << "kronProd shape: " << kronProd_red.rows() << " " << kronProd_red.cols() << std::endl;
-	#endif
+  #endif
   finished = 1;	
 }
 
 // evaluate the fitting polynomial at coord
 const double orthoPoly3D::operator()(const std::vector<double>& coord)
 {
-	if (!finished) 
-	{
-		std::cerr << "Coefficients to basis have not been generated" << std::endl;
-		exit(1);
-	}
+  if (!finished) 
+  {
+    std::cerr << "Coefficients to basis have not been generated" << std::endl;
+    exit(1);
+  }
   MatrixXd phix(1,order+1);
   MatrixXd phiy(1,order+1);
   MatrixXd phiz(1,order+1); 
@@ -223,21 +223,21 @@ const double orthoPoly3D::operator()(const std::vector<double>& coord)
     phiy(0,i) = opy->EvaluateOrthogonal(i,coord[1]);
     phiz(0,i) = opz->EvaluateOrthogonal(i,coord[2]);
   }
- 
+  
   MatrixXd Phi = kroneckerProduct(phix,phiy);
   Phi = kroneckerProduct(Phi,phiz).eval();
   #ifdef DEBUG
     std::cout << Phi.rows() << " " << Phi.cols() << std::endl;
-	#endif
-
-	MatrixXd Phi_red(Phi.rows(), Phi.cols()-toRemove.size()); 
+  #endif
+  
+  MatrixXd Phi_red(Phi.rows(), Phi.cols()-toRemove.size()); 
   removeColumn(Phi,Phi_red,toRemove);
   
   #ifdef DEBUG
     std::cout << Phi_red.rows() << " " << Phi_red.cols() << std::endl;
     std::cout << a.rows() << " " << a.cols() << std::endl;
   #endif
-
+  
   return (Phi_red*a)(0,0);
 }
 
@@ -248,33 +248,32 @@ void orthoPoly3D::run1(const VectorXd& sigma)
   MatrixXd NewPhi;
   NewPhi = kroneckerProduct(opx->phi,opy->phi);
   NewPhi = kroneckerProduct(NewPhi, opz->phi).eval();
-
-	Timer T;
-	std::cout << "Removing stuff" << std::endl;
-	T.start();	
+  
+  Timer T;
+  std::cout << "Removing stuff" << std::endl;
+  T.start();	
   MatrixXd NewPhi_red(NewPhi.rows(),NewPhi.cols()-toRemove.size());
-
+  
   removeColumn(NewPhi,NewPhi_red,toRemove); 
-
-	T.stop();
-	std::cout << "Time spent removing: " << T.elapsed() << std::endl;
-	
-	VectorXd sigma_approx = NewPhi_red*a;
+  
+  T.stop();
+  std::cout << "Time spent removing: " << T.elapsed() << std::endl;
+  
+  VectorXd sigma_approx = NewPhi_red*a;
   VectorXd error = (sigma_approx - sigma).cwiseAbs();
   std::cout << "max error " << error.maxCoeff() << std::endl; 
   std::cout << "min error " << error.minCoeff() << std::endl; 
-
 }     
 #endif
 
 void orthoPoly3D::Reset()
 {
-	if (opx) opx.reset();	
-	if (opy) opy.reset();
-	if (opz) opz.reset();
-	a.resize(0);
-	finished = 0;
-	toRemove.resize(0);
+  if (opx) opx.reset();	
+  if (opy) opy.reset();
+  if (opz) opz.reset();
+  a.resize(0);
+  finished = 0;
+  toRemove.resize(0);
 }
 
 
