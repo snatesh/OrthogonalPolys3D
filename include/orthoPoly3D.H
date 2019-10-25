@@ -38,26 +38,26 @@ class orthoPoly3D
   
   // constructors and destructors 
   public:
-  	// default ctor
-  	orthoPoly3D();
-   
-  	// complete ctor 
+    // default ctor
+    orthoPoly3D();
+    
+    // complete ctor 
     orthoPoly3D(int _order, const VectorXd& _sigma, 
                 const std::vector<double>& _x, const std::vector<double>& _y, 
                 const std::vector<double>& _z);
-  
-  
-  	// partial ctor without sigma and joined coordinates (only constructs orthogonal polynomils)
-  	orthoPoly3D(int _order, const std::vector<std::vector<double>>& coords);
-  	
-  
-  	// move constructor
+    
+    
+    // partial ctor without sigma and joined coordinates (only constructs orthogonal polynomils)
+    orthoPoly3D(int _order, const std::vector<std::vector<double>>& coords);
+    
+    
+    // move constructor
     orthoPoly3D(orthoPoly3D&& op); 
-  
-  	// move assignment	
+    
+    // move assignment	
     orthoPoly3D& operator=(orthoPoly3D&& op);
-  
-  	// dtor
+    
+    // dtor
     ~orthoPoly3D(){}
   
   // methods
@@ -67,16 +67,16 @@ class orthoPoly3D
     void run1(const VectorXd& sigma);
     #endif
     // compute coefficients for polynomial expansion of sampled function
-  	void computeA(const VectorXd& sigma);
+    void computeA(const VectorXd& sigma);
     // evaluate the fitting polynomial at coord
     const double operator()(const std::vector<double>& coord);
     // return the status of the approximant object
     // 1 indicates approximant is available, 0 otherwise 
-  	const bool status() const {return finished;}	
+    const bool status() const {return finished;}	
     // reset the object to its default state
-  	void Reset();
+    void Reset();
     VectorXd getCoeffs() { return a; }
-  		
+    	
   private:
     // total order of basis
     int order;
