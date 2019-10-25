@@ -13,12 +13,6 @@ using Eigen::KroneckerProduct;
 using Eigen::Dynamic;
 using Eigen::RowMajor;
 
-//class orthoPoly1D;
-
-// TODO: Generalize to higher order elements with more than one internal node per patch
-//       where averages need to be taken for duplicate recovered vaules
-//  Implement copy constructor and copy assignment constructor since we use a non-default 
-//    destructor
 
 // defines dynamicall sized matrix stype with row-major storage
 // this is used to optimize computations involving access to entire rows
