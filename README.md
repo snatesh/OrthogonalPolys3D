@@ -1,2 +1,6 @@
 # OrthogonalPolys3D
-Orthogonal polynomials in 3D, based on a tensor product construction of 1D orthogonal polynomials. The 1D polynomials are defined in terms of a three-term recurrence relation derived with Gram-Schmidt on standard monomials.
+Orthogonal polynomials in 3D, based on a tensor product construction of 1D orthogonal polynomials. The 1D polynomials are defined in terms of a three-term recurrence relation derived with Gram-Schmidt on standard monomials. 
+
+This was part of investigations I conducted in 2017 while at Illinois Rocstar. For the purpose of adaptive mesh refinement based on a-priori error erstimation, I was using the so-called patch-recovery method, which involves evaluating polynomial interpolants constructed over patches of a grid cell and comparing its evaluation to the nodal solution. This requires repeated solves of the normal equations, which are ill-conditioned in polynomial fitting. By using orthogonal polynomials, the normal equations are diagonal, so inversion is a trivial operation. However, this simple tensor product construction restricts the mesh to the rectilinear variety, while we generally used unstructured meshes with arbitrary polyhedral cell types. 
+
+The C++ implementation is in the src and include folders, and the python2.7 folder contains my numpy implementation for comparison. Simple tests are in the testing folder, wrapping around the Google-test framework.
